@@ -5,8 +5,7 @@
   "author": "Markus Tran <thebluepillow@gmail.com>",
   "main": "index.js",
   "scripts": {
-    "build": "browserify examples/example.js -o examples/bundle.js",
-    "lint": "eslint ."
+    "build": "browserify examples/example.js -o examples/bundle.js"
   },
   "repository": {
     "type": "git",
