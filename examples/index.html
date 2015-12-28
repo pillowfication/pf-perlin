@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>pf-perlin examples</title>
+  <script src="bundle.js"></script>
+  <style>
+    html, body {width: 100%; height: 100%; margin: 0; border: 0; padding: 0; cursor: pointer;}
+    body       {perspective: 800px; perspective-origin: 50% 50%;}
+    #cube      {position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; margin: -140px 0 0 -140px; transform-style: preserve-3d;}
+    #cube div  {position: absolute; width: 100%; height: 100%; border: 1px solid black; background-color: rgba(0, 0, 0, .5);}
+    #F         {transform: translateZ(140px);}
+    #B         {transform: translateZ(-140px) rotateY(180deg);}
+    #U         {transform: translateY(-140px) rotateX(90deg);}
+    #D         {transform: translateY(140px)  rotateX(-90deg);}
+    #L         {transform: translateX(-140px) rotateY(-90deg);}
+    #R         {transform: translateX(140px)  rotateY(90deg);}
+    span       {display: block; position: absolute; bottom: 1rem; width: 100%; text-align: center;}
+  </style>
+</head>
+
+<body>
+  <div id="cube">
+    <div id="F"></div>
+    <div id="B"></div>
+    <div id="U"></div>
+    <div id="D"></div>
+    <div id="L"></div>
+    <div id="R"></div>
+  </div>
+  <span>Please view in Chrome or Firefox.</span>
+</body>
+</html>
