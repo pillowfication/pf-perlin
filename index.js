@@ -4,49 +4,43 @@ var random = require('random-seed');
 var assign = require('lodash/object/assign');
 var isArray = require('lodash/lang/isarray');
 
-function defaults(options) {
-  var defaults = assign({
-    seed: null,
-    dimensions: 2,
-    min: 0,
-    max: 1,
-    wavelength: 1,
-    octaves: 8,
-    octaveScale: .5,
-    persistence: .5,
-    interpolation: function(a, b, t) {
-      return (1-Math.cos(Math.PI*t))/2 * (b-a) + a;
-    }
-  }, options);
-  defaults.octaveScale = 1/defaults.octaveScale;
-
-  // amp = sum_{i=1}^{oct} per^{i-1} = (per^oct-1)/(per-1)
-  // val = (val/amp)*(max-min)+min = val*factor+min
-  // factor = (max-min)*(per-1)/(per^oct-1)
-  defaults.factor = (defaults.max-defaults.min)*(defaults.persistence-1)/
-    (Math.pow(defaults.persistence, defaults.octaves)-1);
-
-  return defaults;
-}
+var defaults = {
+  seed: null,
+  dimensions: 2,
+  min: 0,
+  max: 1,
+  wavelength: 1,
+  octaves: 8,
+  octaveScale: .5,
+  persistence: .5,
+  interpolation: function(a, b, t) {
+    return (1-Math.cos(Math.PI*t))/2 * (b-a) + a;
+  }
+};
 
 function Perlin(options) {
   if (!options || !options.dimensions || options.dimensions === 2)
     return Perlin2D(options);
 
-  options = defaults(options);
+  options = assign(defaults, options);
 
   var data = [], rand = random.create();
   rand.seed(options.seed);
+
   var dim = options.dimensions,
       dim2 = 1 << dim,
       len = dim-1,
       min = options.min,
       lam = options.wavelength,
       oct = options.octaves,
-      sca = options.octaveScale,
+      sca = 1/options.octaveScale,
       per = options.persistence,
-      int = options.interpolation,
-      fac = (options.max-min)*(per-1)/(Math.pow(per, oct)-1);
+      int = options.interpolation;
+
+  // amp = sum_{i=1}^{oct} per^{i-1} = (per^oct-1)/(per-1)
+  // val = (val/amp)*(max-min)+min = val*factor+min
+  // factor = (max-min)*(per-1)/(per^oct-1)
+  var fac = (options.max-min)*(per-1)/(Math.pow(per, oct)-1);
 
   // Get the [0, 1) value at coordinates x
   function _get(x) {
@@ -104,17 +98,22 @@ function Perlin(options) {
 }
 
 function Perlin2D(options) {
-  options = defaults(options);
+  options = assign(defaults, options);
 
   var data = [], rand = random.create();
   rand.seed(options.seed);
+
   var min = options.min,
       lam = options.wavelength,
       oct = options.octaves,
-      sca = options.octaveScale,
+      sca = 1/options.octaveScale,
       per = options.persistence,
-      int = options.interpolation,
-      fac = (options.max-min)*(per-1)/(Math.pow(per, oct)-1);
+      int = options.interpolation;
+
+  // amp = sum_{i=1}^{oct} per^{i-1} = (per^oct-1)/(per-1)
+  // val = (val/amp)*(max-min)+min = val*factor+min
+  // factor = (max-min)*(per-1)/(per^oct-1)
+  var fac = (options.max-min)*(per-1)/(Math.pow(per, oct)-1);
 
   // Get the [0, 1) value at coordinates (x, y)
   function _get(x, y) {
