@@ -2,23 +2,28 @@
   "name": "pf-perlin",
   "version": "1.0.0",
   "description": "N-Dimensional Perlin Noise Generator",
-  "author": "Markus Tran <thebluepillow@gmail.com>",
-  "main": "index.js",
+  "author": {
+    "name": "Markus Tran",
+    "email": "thebluepillow@gmail.com",
+    "url": "http://pillowfication.com"
+  },
   "scripts": {
     "build": "browserify examples/example.js -o examples/bundle.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pillowfication/pf-perlin"
+    "url": "git://github.com/pillowfication/pf-perlin.git"
   },
   "bugs": {
     "url": "https://github.com/pillowfication/pf-perlin/issues"
   },
+  "main": "index.js",
   "dependencies": {
     "lodash": "3.10.x",
     "random-seed": "0.3.x"
   },
   "devDependencies": {
+    "eslint-config-pf": "*",
     "jquery": "2.1.x",
     "pf-canvas": "1.0.x"
   },
