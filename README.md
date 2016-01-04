@@ -6,10 +6,10 @@
 
 ```javascript
 // Require the module to use it.
-var pfperlin = require('pf-perlin');
+var perlin = require('pf-perlin');
 
 // Create a 3D Perlin Noise generator.
-var Perlin3D = pfperlin({dimensions: 3});
+var Perlin3D = perlin({dimensions: 3});
 
 // Use it to make a 100x100x100 grid of values
 var res = 100, data = [];
@@ -34,7 +34,7 @@ npm run build
 
 ## API
 
-### pfperlin(options)
+### perlin(options)
 
  * **options** (Object) - *Optional*. An object of options
    * **seed** (Mixed) - Default: `null`. The RNG's seed
@@ -47,7 +47,7 @@ npm run build
    * **persistence** (Number) - Default: `1/2`. Value weighting for successive octaves
    * **interpolation** (Function) - Default: *cosine*. Interpolation function used
 
-`seed` is expected to be a String, but will be passed through `JSON.stringify()` if it is not. Note that even with the same seed, a different order of `pfperlin.get()` calls will change the overall noise function since its values are generated lazily.
+`seed` is expected to be a String, but will be passed through `JSON.stringify()` if it is not. Note that even with the same seed, a different order of `perlin.get()` calls will change the overall noise function since its values are generated lazily.
 
 `wavelength` sets the size of the first octave, and each successive octave will be `octaveScale` times the previous. The octaves are centered about the origin, and added together according to their weight. The first octave has a weight of `1`, and each successive octave will be `persistence` times the previous.
 
