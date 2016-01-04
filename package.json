@@ -20,8 +20,8 @@
     "build": "browserify examples/example.js -o examples/bundle.js"
   },
   "dependencies": {
-    "lodash": "3.10.x",
-    "random-seed": "0.3.x"
+    "lodash": "3.10.1",
+    "random-seed": "0.3.0"
   },
   "devDependencies": {
     "eslint-config-pf": "*",
