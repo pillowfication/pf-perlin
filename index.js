@@ -2,7 +2,7 @@
 
 var random = require('random-seed');
 var assign = require('lodash/object/assign');
-var isArray = require('lodash/lang/isarray');
+var isArray = require('lodash/lang/isArray');
 
 var defaults = {
   seed: null,
