@@ -17,16 +17,17 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "browserify examples/example.js -o examples/bundle.js"
+    "build": "browserify example/example.js -o example/bundle.js"
   },
   "dependencies": {
-    "lodash": "3.10.1",
+    "lodash": "4.7.0",
     "random-seed": "0.3.0"
   },
   "devDependencies": {
-    "eslint-config-pf": "*",
-    "jquery": "2.1.x",
-    "pf-canvas": "1.0.x"
+    "eslint": "^2.6.0",
+    "eslint-config-pf": "1.0.4",
+    "jquery": "^2.2.2",
+    "pf-canvas": "^1.0.6"
   },
   "keywords": [
     "pillow",

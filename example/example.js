@@ -14,7 +14,10 @@ $(function() {
   var perlin = pfperlin({
     dimensions: 4,
     wavelength: 12,
-    octaves: 2
+    octaves: 2,
+    interpolation: function(a, b, t) {
+      return t * (b-a) + a;
+    }
   });
   var i, c, r;
 
@@ -24,14 +27,12 @@ $(function() {
     for (c = 0; c < res && (col = []); c = face.push(col))
       for (r = 0; r < res; r = col.push(point))
         switch (i) {
-          /* eslint-disable */
           case 0: point = [c, r, 0];         break;
           case 1: point = [res-1-c, r, res]; break;
           case 2: point = [c, 0, res-1-r];   break;
           case 3: point = [c, res, r];       break;
           case 4: point = [0, r, res-1-c];   break;
           case 5: point = [res, r, c];       break;
-          /* eslint-enable */
         }
 
   // Create the canvases on each face
