@@ -6,24 +6,20 @@
 
 ```javascript
 // Require the module to use it.
-var perlin = require('pf-perlin');
+const perlin = require('pf-perlin');
 
 // Create a 3D Perlin Noise generator.
-var Perlin3D = perlin({dimensions: 3});
+const Perlin3D = perlin({dimensions: 3});
 
 // Use it to make a 100x100x100 grid of values
-var res = 100, data = [];
-for (var i = 0; i < res; ++i) {
-  var yData = [];
-  for (var j = 0; j < res; ++j) {
-    var zData = [];
-    for (var k = 0; k < res; ++k) {
-      zData.push(Perlin3D.get(i/res, j/res, k/res));
-    }
-    yData.push(zData);
-  }
-  data.push(yData);
-}
+let res = 100, data = [];
+for (let i = 0; i < res; ++i)
+  for (let j = 0; j < res; ++j)
+    for (let k = 0; k < res; ++k)
+      data.push(Perlin3D.get(i/res, j/res, k/res));
+
+const _ = require('lodash');
+data = _.chunk(_.chunk(data, res), res);
 ```
 
 See `examples/index.html` for a 4-dimensional usage. To build it, run

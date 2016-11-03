@@ -20,14 +20,13 @@
     "build": "browserify example/example.js -o example/bundle.js"
   },
   "dependencies": {
-    "lodash": "4.7.0",
-    "random-seed": "0.3.0"
+    "random-seed": "^0.3.0"
   },
   "devDependencies": {
-    "eslint": "^2.6.0",
-    "eslint-config-pf": "1.0.4",
-    "jquery": "^2.2.2",
-    "pf-canvas": "^1.0.6"
+    "eslint": "^3.9.1",
+    "eslint-config-pf": "1.0.6",
+    "jquery": "2.2.2",
+    "pf-canvas": "1.0.6"
   },
   "keywords": [
     "pillow",
