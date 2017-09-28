@@ -17,16 +17,16 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "browserify example/example.js -o example/bundle.js"
+    "example": "browserify example/example.js -o example/bundle.js",
+    "test": "node_modules/standard/bin/cmd.js"
   },
   "dependencies": {
     "random-seed": "^0.3.0"
   },
   "devDependencies": {
-    "eslint": "^3.9.1",
-    "eslint-config-pf": "1.0.6",
     "jquery": "2.2.2",
-    "pf-canvas": "1.0.6"
+    "pf-canvas": "1.0.6",
+    "standard": "^10.0.3"
   },
   "keywords": [
     "pillow",
