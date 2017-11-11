@@ -6,55 +6,81 @@
 
 ```javascript
 // Require the module to use it.
-const perlin = require('pf-perlin');
+const Perlin = require('pf-perlin')
 
 // Create a 3D Perlin Noise generator.
-const Perlin3D = perlin({dimensions: 3});
+const perlin3D = new Perlin({ dimensions: 3 })
 
 // Use it to make a 100x100x100 grid of values
-let res = 100, data = [];
-for (let i = 0; i < res; ++i)
-  for (let j = 0; j < res; ++j)
-    for (let k = 0; k < res; ++k)
-      data.push(Perlin3D.get(i/res, j/res, k/res));
+const resolution = 100
+let data = []
+for (let x = 0; x < resolution; ++x) {
+  for (let y = 0; y < resolution; ++y) {
+    for (let z = 0; z < resolution; ++z) {
+      data.push(perlin3D.get([ x / resolution, y / resolution, z / resolution ]))
+    }
+  }
+}
 
-const _ = require('lodash');
-data = _.chunk(_.chunk(data, res), res);
-```
-
-See `examples/index.html` for a 4-dimensional usage. To build it, run
-```
-npm install browserify -g
-npm run build
+const _ = require('lodash')
+data = _.chunk(_.chunk(data, resolution), resolution)
+data[5][62][17]
+// 0.6594545530358533
 ```
 
 ## API
 
-### perlin(options)
+### `Perlin`
 
- * **options** (Object) - *Optional*. An object of options
-   * **seed** (Mixed) - Default: `null`. The RNG's seed
-   * **dimensions** (Number) - Default: `2`. Number of dimensions
-   * **min** (Number) - Default: `0`. The minimum value returned
-   * **max** (Number) - Default: `1`. The maximum value returned
-   * **wavelength** (Number) - Default: `1`. Size of the largest octave
-   * **octaves** (Number) - Default: `8`. How many octaves to sample
-   * **octaveScale** (Number) - Default: `1/2`. Scaling for successive octaves
-   * **persistence** (Number) - Default: `1/2`. Value weighting for successive octaves
-   * **interpolation** (Function) - Default: *cosine*. Interpolation function used
+*({Class})*: Represents a Perlin noise generator.
 
-`seed` is expected to be a String, but will be passed through `JSON.stringify()` if it is not. Note that even with the same seed, a different order of `perlin.get()` calls will change the overall noise function since its values are generated lazily.
+```javascript
+const Perlin = require('pf-perlin')
+const noiseGenerator = new Perlin()
+```
 
-`wavelength` sets the size of the first octave, and each successive octave will be `octaveScale` times the previous. The octaves are centered about the origin, and added together according to their weight. The first octave has a weight of `1`, and each successive octave will be `persistence` times the previous.
+### `Perlin.constructor([options])`
+
+**Arguments**
+ 1. `[options]` *(Object)*: An objects of options. All options are optional.
+
+|  Option         | Type     | Default  | Description                    |
+|:---------------:|:--------:|:--------:|:-------------------------------|
+| `seed`          | String   | `null`   | RNG's seed                     |
+| `dimensions`    | Number   | `2`      | Number of dimensions           |
+| `min`           | Number   | `0`      | Minimum value returned         |
+| `max`           | Number   | `1`      | Maximum value returned         |
+| `wavelength`    | Number   | `1`      | Size of the first octave       |
+| `octaves`       | Number   | `8`      | Number of octaves to sample    |
+| `octaveScale`   | Number   | `1/2`    | Scaling for successive octaves |
+| `persistence`   | Number   | `1/2`    | Weight for successive octaves  |
+| `interpolation` | Function | *cosine* | Interpolation function used    |
+
+`seed` is expected to be a String, but will be passed through `JSON.stringify()` if it is not. Note that even with the same seed, a different order of `<Perlin>.get()` calls will change the overall noise function since its values are generated lazily.
+
+`wavelength` sets the size of the first octave, and each successive octave will be `octaveScale` times the previous. The octaves are centered about the origin and added together according to their weight. The first octave has a weight of `1`, and each successive octave will be `persistence` times the previous.
 
 The octaves are sampled using the `interpolation` function with signature `function(a, b, t)` that returns a value between `a` and `b` according to the parameter `0 <= t <= 1`. The default interpolation function used is cosine interpolation.
 
 ```javascript
-interpolation: function(a, b, t) {
-  return (1-Math.cos(Math.PI*t))/2 * (b-a) + a;
+interpolation: function (a, b, t) {
+  return (1 - Math.cos(Math.PI * t)) / 2 * (b - a) + a
 }
 ```
 
-After the octaves are sampled and added together, the values are adjusted to fall between `min` and `max`. Note that the value distribution is roughly Gaussian.
+After the octaves are sampled and added together, the values are adjusted to fall between `min` and `max`. Note that the value distribution is roughly Gaussian depending on the number of octaves.
 
- * **returns** (Object) - An object with a single function `get()`. This function accepts either the coordinates as parameters `get(x, y, z)` or an array of coordinates `get([x, y, z])`. This object does not store any returned values.
+### `Perlin.prototype.get(coordinates)`
+
+**Arguments**
+ 1. `coordinates` *(Array<Number>)*: The data point to get. Its length should match `dimensions`.
+
+**Returns**
+ * *(Number)*: The value at those coordinates.
+
+```javascript
+const perlin4D = new Perlin({ dimensions: 4 })
+
+perlin4D.get([ 1, 2, 3, 4 ])
+// 0.538503118881535
+```

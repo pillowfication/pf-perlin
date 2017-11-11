@@ -1,1 +1,1 @@
-module.exports = require('./src/perlin.js')
+module.exports = require('./src/perlin')

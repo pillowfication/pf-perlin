@@ -17,21 +17,18 @@
   },
   "main": "index.js",
   "scripts": {
-    "example": "browserify example/example.js -o example/bundle.js",
     "test": "node_modules/standard/bin/cmd.js"
   },
   "dependencies": {
     "random-seed": "^0.3.0"
   },
   "devDependencies": {
-    "jquery": "2.2.2",
-    "pf-canvas": "1.0.6",
     "standard": "^10.0.3"
   },
   "keywords": [
-    "pillow",
+    "noise",
     "perlin",
-    "noise"
+    "random"
   ],
   "license": "MIT"
 }
