@@ -19,7 +19,7 @@ class Perlin {
     options = defaultify(options)
 
     this._data = {}
-    let uheprng = random.create()
+    const uheprng = random.create()
     uheprng.seed(options.seed)
     this._random = uheprng.random
 
