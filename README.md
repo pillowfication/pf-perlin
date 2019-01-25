@@ -23,7 +23,7 @@ for (let x = 0; x < resolution; ++x) {
 }
 
 const _ = require('lodash')
-data = _.chunk(_.chunk(data, resolution), resolution)
+data = _(data).chunk(resolution).chunk(resolution).value()
 data[5][62][17]
 // 0.6594545530358533
 ```
