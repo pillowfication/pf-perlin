@@ -2,6 +2,8 @@
 
 **N-Dimensional Perlin Noise Generator** - A Perlin Noise generator for any number of dimensions.
 
+![Rainbow Perlin Noise](/rainbow-perlin.png)
+
 ## Examples
 
 ```javascript
@@ -26,6 +28,38 @@ const _ = require('lodash')
 data = _(data).chunk(resolution).chunk(resolution).value()
 data[5][62][17]
 // 0.6594545530358533
+```
+
+The following example creates the above picture.
+
+```javascript
+// Create the canvas
+const { createCanvas } = require('canvas')
+const [ width, height ] = [ 800, 200 ]
+const canvas = createCanvas(width, height)
+const ctx = canvas.getContext('2d', { alpha: false })
+
+// Create the image data
+const Perlin = require('./perlin')
+const perlin3D = new Perlin({ dimensions: 3 })
+const resolution = 100
+const imageData = ctx.createImageData(width, height)
+let dataIndex = 0
+for (let row = 0; row < height; ++row) {
+  for (let col = 0; col < width; ++col) {
+    imageData.data[dataIndex++] = perlin3D.get([ row / resolution, col / resolution, 0 ]) * 256 | 0
+    imageData.data[dataIndex++] = perlin3D.get([ row / resolution, col / resolution, 1 ]) * 256 | 0
+    imageData.data[dataIndex++] = perlin3D.get([ row / resolution, col / resolution, 2 ]) * 256 | 0
+    ++dataIndex
+  }
+}
+
+// Export the image data
+const fs = require('fs')
+const path = require('path')
+ctx.putImageData(imageData, 0, 0)
+canvas.createPNGStream()
+  .pipe(fs.createWriteStream(path.resolve(__dirname, './rainbow-perlin.png')))
 ```
 
 ## API
