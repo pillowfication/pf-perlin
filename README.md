@@ -1,6 +1,6 @@
 # pf-perlin
 
-**N-Dimensional Perlin Noise Generator** - A Perlin Noise generator for any number of dimensions.
+**N-Dimensional Perlin Noise Generator** - A Perlin noise generator for any number of dimensions.
 
 ![Rainbow Perlin Noise](/rainbow-perlin.png)
 
@@ -111,6 +111,8 @@ After the octaves are sampled and added together, the values are adjusted to fal
 
 **Returns**
  * *(Number)*: The value at those coordinates.
+
+Note: This function may modify `coordinates`. If this is an issue, use `perlin.get(coordinates.slice())`.
 
 ```javascript
 const perlin4D = new Perlin({ dimensions: 4 })
