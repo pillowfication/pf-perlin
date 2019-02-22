@@ -1,6 +1,6 @@
 # pf-perlin
 
-**N-Dimensional Perlin Noise Generator** - A Perlin noise generator for any number of dimensions.
+**N-Dimensional Perlin Noise Generator** - An approximate [Perlin noise generator](https://en.wikipedia.org/wiki/Perlin_noise) for any number of dimensions. This is NOT true Perlin noise, but is a faster alternative. The difference is explained at [http://pf-n.co/github/pf-perlin](http://pf-n.co/github/pf-perlin).
 
 ![Rainbow Perlin Noise](/rainbow-perlin.png)
 
