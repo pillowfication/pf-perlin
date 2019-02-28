@@ -1,6 +1,6 @@
 # pf-perlin
 
-**N-Dimensional Perlin Noise Generator** - An approximate [Perlin noise generator](https://en.wikipedia.org/wiki/Perlin_noise) for any number of dimensions. This is NOT true Perlin noise, but is a faster alternative. The difference is explained at [http://pf-n.co/github/pf-perlin](http://pf-n.co/github/pf-perlin).
+**N-Dimensional Perlin Noise Generator** - A [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise) generator for any number of dimensions.
 
 ![Rainbow Perlin Noise](/rainbow-perlin.png)
 
@@ -40,8 +40,8 @@ const canvas = createCanvas(width, height)
 const ctx = canvas.getContext('2d', { alpha: false })
 
 // Create the image data
-const Perlin = require('./perlin')
-const perlin3D = new Perlin({ dimensions: 3 })
+const Perlin = require('pf-perlin')
+const perlin3D = new Perlin({ dimensions: 3, seed: 'pillow' })
 const resolution = 100
 const imageData = ctx.createImageData(width, height)
 let dataIndex = 0
@@ -56,10 +56,9 @@ for (let row = 0; row < height; ++row) {
 
 // Export the image data
 const fs = require('fs')
-const path = require('path')
 ctx.putImageData(imageData, 0, 0)
 canvas.createPNGStream()
-  .pipe(fs.createWriteStream(path.resolve(__dirname, './rainbow-perlin.png')))
+  .pipe(fs.createWriteStream('rainbow-perlin.png'))
 ```
 
 ## API
@@ -78,27 +77,29 @@ const noiseGenerator = new Perlin()
 **Arguments**
  1. `[options]` *(Object)*: An objects of options. All options are optional.
 
-|  Option         | Type     | Default  | Description                    |
-|:---------------:|:--------:|:--------:|:-------------------------------|
-| `seed`          | String   | `null`   | RNG's seed                     |
-| `dimensions`    | Number   | `2`      | Number of dimensions           |
-| `min`           | Number   | `0`      | Minimum value returned         |
-| `max`           | Number   | `1`      | Maximum value returned         |
-| `wavelength`    | Number   | `1`      | Size of the first octave       |
-| `octaves`       | Number   | `8`      | Number of octaves to sample    |
-| `octaveScale`   | Number   | `1/2`    | Scaling for successive octaves |
-| `persistence`   | Number   | `1/2`    | Weight for successive octaves  |
-| `interpolation` | Function | *cosine* | Interpolation function used    |
+|  Option         | Type     | Default       | Description                    |
+|:---------------:|:--------:|:-------------:|:-------------------------------|
+| `seed`          | String   | `null`        | RNG's seed                     |
+| `dimensions`    | Number   | `2`           | Number of dimensions           |
+| `min`           | Number   | `0`           | Minimum value returned         |
+| `max`           | Number   | `1`           | Maximum value returned         |
+| `wavelength`    | Number   | `1`           | Size of the first octave       |
+| `octaves`       | Number   | `8`           | Number of octaves to sample    |
+| `octaveScale`   | Number   | `1/2`         | Scaling for successive octaves |
+| `persistence`   | Number   | `1/2`         | Weight for successive octaves  |
+| `interpolation` | Function | 6t⁵−15t⁴+10t³ | Interpolation function used    |
 
-`seed` is expected to be a String, but will be passed through `JSON.stringify()` if it is not. Note that even with the same seed, a different order of `<Perlin>.get()` calls will change the overall noise function since its values are generated lazily.
+Note that even with the same seed, a different order of `<Perlin>.get()` calls can change the overall noise function since its values are generated lazily.
 
 `wavelength` sets the size of the first octave, and each successive octave will be `octaveScale` times the previous. The octaves are centered about the origin and added together according to their weight. The first octave has a weight of `1`, and each successive octave will be `persistence` times the previous.
 
-The octaves are sampled using the `interpolation` function with signature `function(a, b, t)` that returns a value between `a` and `b` according to the parameter `0 <= t <= 1`. The default interpolation function used is cosine interpolation.
+The octaves are sampled using the `interpolation` function with signature `function(a, b, t)` that returns a value between `a` and `b` according to the parameter `0 <= t <= 1`. The default interpolation function uses the polynomial 6t⁵−15t⁴+10t³ specified by Ken Perlin as an improvement over his earlier 3t²−2t³ (see [Improving Noise](https://mrl.nyu.edu/~perlin/paper445.pdf)).
 
 ```javascript
+const poly = t => 6 * pow(t, 5) - 15 * pow(t, 4) + 10 * pow(t, 3)
+
 interpolation: function (a, b, t) {
-  return (1 - Math.cos(Math.PI * t)) / 2 * (b - a) + a
+  return poly(t) * (b - a) + a
 }
 ```
 

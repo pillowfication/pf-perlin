@@ -1,4 +1,5 @@
-const random = require('random-seed')
+const seedrandom = require('pf-seedrandom')
+const { pow, sqrt, log, cos, floor, hypot, PI } = Math
 
 function defaultify (options) {
   return Object.assign({
@@ -10,7 +11,7 @@ function defaultify (options) {
     octaves: 8,
     octaveScale: 0.5,
     persistence: 0.5,
-    interpolation: (a, b, t) => (1 - Math.cos(Math.PI * t)) / 2 * (b - a) + a
+    interpolation: (a, b, t) => (6 * pow(t, 5) - 15 * pow(t, 4) + 10 * pow(t, 3)) * (b - a) + a
   }, options)
 }
 
@@ -19,9 +20,7 @@ class Perlin {
     options = defaultify(options)
 
     this._data = {}
-    const uheprng = random.create()
-    uheprng.seed(options.seed)
-    this._random = uheprng.random
+    this._random = seedrandom(options.seed)
 
     this.dim = options.dimensions
     this.di2 = 1 << options.dimensions
@@ -33,16 +32,40 @@ class Perlin {
     this.per = options.persistence
     this.int = options.interpolation
 
-    // amp = sum_{i=1}^{oct} per^{i-1} = (per^oct-1)/(per-1)
-    // val = (val/amp)*(max-min)+min = val*fac+min
+    // amp = sum_{i=1}^{oct} sqrt(dim)*per^{i-1} = sqrt(dim)*(per^oct-1)/(per-1)
+    // val = (val/amp+1/2)*(max-min)+min = val*fac+1/2*(max-min)+min
     // fac = (max-min)*(per-1)/(per^oct-1)
+    // min = 1/2*(max-min)+min
     this.fac =
       (options.max - options.min) *
       (options.persistence - 1) /
-      (Math.pow(options.persistence, options.octaves) - 1)
+      (pow(options.persistence, options.octaves) - 1)
+    this.min += 0.5 * (options.max - options.min)
   }
 
-  // Lazily get the grid value at coordinates x-vect
+  // Normal distribution
+  _randnorm () {
+    let u = 0
+    let v = 0
+    while (u === 0) u = this._random()
+    while (v === 0) v = this._random()
+    return sqrt(-2 * log(u)) * cos(2 * PI * v)
+  }
+
+  // Random N-dimensional unit vector
+  _randvect () {
+    const x = []
+    for (let subscript = 0; subscript < this.dim; ++subscript) {
+      x[subscript] = this._randnorm()
+    }
+    const length = hypot(...x)
+    for (let subscript = 0; subscript < this.dim; ++subscript) {
+      x[subscript] /= length
+    }
+    return x
+  }
+
+  // Lazily get the grid vector at coordinates x-vect
   _grid (x) {
     let axis = this._data
     let coordinate
@@ -51,7 +74,7 @@ class Perlin {
     }
 
     const value = axis[coordinate]
-    return value === undefined ? (axis[coordinate] = this._random()) : value
+    return value === undefined ? (axis[coordinate] = this._randvect()) : value
   }
 
   // Get the [0, 1) value at coordinates x-vect
@@ -60,17 +83,23 @@ class Perlin {
     const integral = []
     const fractional = []
     for (let subscript = 0; subscript < this.dim; ++subscript) {
-      integral[subscript] = Math.floor(x[subscript])
+      integral[subscript] = floor(x[subscript])
       fractional[subscript] = x[subscript] - integral[subscript]
     }
 
     // Store hypercube-corner values
     const values = []
-    for (let index = 0, corner = []; index < this.di2; ++index) {
+    for (let index = 0, corner = [], distance = []; index < this.di2; ++index) {
       for (let subscript = 0; subscript < this.dim; ++subscript) {
         corner[subscript] = integral[subscript] + (index >> subscript & 1)
+        distance[subscript] = x[subscript] - corner[subscript]
       }
-      values.push(this._grid(corner))
+      const gradient = this._grid(corner)
+      let dotProd = 0
+      for (let subscript = 0; subscript < this.dim; ++subscript) {
+        dotProd += gradient[subscript] * distance[subscript]
+      }
+      values.push(dotProd)
     }
 
     // Repeatedly interpolate along axes
@@ -86,8 +115,9 @@ class Perlin {
 
   get (coordinates) {
     // Scale coordinates by wavelength
+    const coord = []
     for (let subscript = 0; subscript < this.dim; ++subscript) {
-      coordinates[subscript] /= this.lam
+      coord[subscript] = coordinates[subscript] / this.lam
     }
 
     // Repeatedly add values from each octave
@@ -95,7 +125,7 @@ class Perlin {
     const x = []
     for (let octave = 0, scale = 1, weight = 1; octave < this.oct; ++octave, scale *= this.sca, weight *= this.per) {
       for (let subscript = 0; subscript < this.dim; ++subscript) {
-        x[subscript] = coordinates[subscript] * scale
+        x[subscript] = coord[subscript] * scale
       }
       value += this._get(x) * weight
     }
