@@ -11,7 +11,7 @@ function defaultify (options) {
     octaves: 8,
     octaveScale: 0.5,
     persistence: 0.5,
-    interpolation: (a, b, t) => (6 * pow(t, 5) - 15 * pow(t, 4) + 10 * pow(t, 3)) * (b - a) + a
+    interpolation: (a, b, t) => (t * t * t * (t * (t * 6 - 15) + 10)) * (b - a) + a
   }, options)
 }
 
